@@ -23,8 +23,8 @@ REALERT=96
 # host semaphore dir
 lockdir="/tmp/monserver"
 
-# your NetCat version successful connection string (usually 'open' or 'succeeded')
-NCOK="succeeded"
+# possible NetCat version successful connection string separated by |  
+NCOK="open|succeeded"
 
 # verify if called with arguments
 if [ $# == 2 ]; then
@@ -39,7 +39,7 @@ for Host in $arr
 do
     myHost=$(echo $Host | awk -F' ' '{print $1}')
     myPort=$(echo $Host | awk -F' ' '{print $2}')
-    nc_out=$(nc -v -z -w 2 $myHost $myPort 2>&1 | grep -sc $NCOK)
+    nc_out=$(nc -v -z -w 2 $myHost $myPort 2>&1 | egrep -sc $NCOK)
     if [ $nc_out -eq 0 ]; then
         # server failed
         if [ ! -f $lockdir/$myHost/$myPort ]; then
